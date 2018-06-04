@@ -8,10 +8,10 @@
 		<!--vuex依赖promise ，使用proyfill 翻译器-->
 		<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.js"></script>
 		<style>
-			div#app{
-				width: 100px;
+			div#app {
+				width: 300px;
 				margin: 50px auto;
-				height: 100px;
+				height: 150px;
 				background-color: #ccc;
 				text-align: center;
 				padding: 5px;
@@ -23,14 +23,27 @@
 	<body>
 		<div id="app">
 			<p>{{ count }}--{{msg}}</p>
+			<counter></counter>
 			<p>
 				<button @click="increment">+</button>
 				<button @click="decrement">-</button>
 			</p>
 		</div>
 		<script>
+			// 创建一个 Counter 组件
+			const counter = {
+				template: `<div>子组件中的:{{ count }}</div>`,
+				computed: {
+					count() {
+						//若根组件中未注册过store 实例，即在根组件中 调用，则可以通过直接获取 store中的state 得到
+						//return store.state.count
+						//根组件中注册过 store ，可以使用this.$store获取到
+						 return this.$store.state.count
+					}
+				}
+			}
 			// make sure to call Vue.use(Vuex) if using a module system
-
+			//单一状态树，每个应用 仅包含一个store 实例
 			const store = new Vuex.Store({
 				//store 中包含属性有 state getter mutation action module
 				//state => 基本数据 
@@ -42,27 +55,33 @@
 					count: 0
 				},
 				mutations: {
-				/*	increment: state => state.count++,
-					decrement: state => state.count--*/
-					
-					increment:function(state){
-						state.count +=1 ;
+					/*	increment: state => state.count++,
+						decrement: state => state.count--*/
+
+					increment: function(state) {
+						state.count += 1;
 					},
-					decrement:function(state){
-						state.count -- ;
+					decrement: function(state) {
+						state.count--;
 					}
 				}
 			})
 
 			new Vue({
 				el: '#app',
+				 // 把 store 对象提供给 “store” 选项，这可以把 store 的实例注入所有的子组件
+				 //在根组件中注册 store
+  				store,
 				computed: {
 					count() {
 						return store.state.count
 					},
-					msg(){
+					msg() {
 						return "hahha"
 					}
+				},
+				components: {
+					counter
 				},
 				methods: {
 					increment() {
