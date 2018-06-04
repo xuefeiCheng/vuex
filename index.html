@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+		<script src="https://unpkg.com/vuex"></script>
+		<!--vuex依赖promise ，使用proyfill 翻译器-->
+		<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.js"></script>
+		<style>
+			div#app{
+				width: 100px;
+				margin: 50px auto;
+				height: 100px;
+				background-color: #ccc;
+				text-align: center;
+				padding: 5px;
+			}
+		</style>
+		<title>最基本的vuex计数应用</title>
+	</head>
+
+	<body>
+		<div id="app">
+			<p>{{ count }}--{{msg}}</p>
+			<p>
+				<button @click="increment">+</button>
+				<button @click="decrement">-</button>
+			</p>
+		</div>
+		<script>
+			// make sure to call Vue.use(Vuex) if using a module system
+
+			const store = new Vuex.Store({
+				//store 中包含属性有 state getter mutation action module
+				//state => 基本数据 
+				//getters => 从基本数据派生的数据 
+				//mutations => 提交更改数据的方法，同步！ 
+				//actions => 像一个装饰器，包裹mutations，使之可以异步。 
+				//modules => 模块化Vuex
+				state: {
+					count: 0
+				},
+				mutations: {
+				/*	increment: state => state.count++,
+					decrement: state => state.count--*/
+					
+					increment:function(state){
+						state.count +=1 ;
+					},
+					decrement:function(state){
+						state.count -- ;
+					}
+				}
+			})
+
+			new Vue({
+				el: '#app',
+				computed: {
+					count() {
+						return store.state.count
+					},
+					msg(){
+						return "hahha"
+					}
+				},
+				methods: {
+					increment() {
+						//更改state 必须使用的是提交mutation的方式，而不是直接更改store.state.count的值，便于追踪状态
+						//触发 mutation 使用 commit
+						//触发 action 使用的是 dispath
+						store.commit('increment')
+					},
+					decrement() {
+						store.commit('decrement')
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>
