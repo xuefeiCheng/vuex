@@ -32,7 +32,7 @@
 		<script>
 			// 创建一个 Counter 组件
 			const counter = {
-				template: `<div>子组件中的:{{ count }}</div>`,
+				template: `<div>子组件中的:{{ count }}--{{this.$store.getters.getGetter}}</div>`,
 				computed: {
 					count() {
 						//若根组件中未注册过store 实例，即在根组件中 调用，则可以通过直接获取 store中的state 得到
@@ -54,6 +54,11 @@
 				state: {
 					count: 0
 				},
+				getters:{
+					getGetter(state){
+						return state.count*2;
+					}
+				},
 				mutations: {
 					/*	increment: state => state.count++,
 						decrement: state => state.count--*/
@@ -63,6 +68,14 @@
 					},
 					decrement: function(state) {
 						state.count--;
+					}
+				},
+				actions:{
+					getCount(context){
+						//异步请求 使用action
+						setTimeout(function(){
+							context.commit('increment');
+						},3000);
 					}
 				}
 			})
@@ -88,7 +101,9 @@
 						//更改state 必须使用的是提交mutation的方式，而不是直接更改store.state.count的值，便于追踪状态
 						//触发 mutation 使用 commit
 						//触发 action 使用的是 dispath
-						store.commit('increment')
+						store.dispatch('getCount')
+						//流程是 使用dispatch触发 action中的 getCount方法，getCount方法是一个异步请求
+						//3000ms后使用commit触发的是mutation中的increment方法
 					},
 					decrement() {
 						store.commit('decrement')
